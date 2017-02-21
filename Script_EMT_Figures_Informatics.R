@@ -31,6 +31,12 @@ load("./data/CCLE.RData")
 load("./data/CTRPv2.RData")
 
 
+
+##################
+## set working directory to where this script is downloaded
+# setwd("./")
+##################
+
 #####################################
 #####################################
 # Merge the two data sets [CTRPv2 and CCLE] (Code by Benjamin)
