@@ -201,9 +201,8 @@ RNAseq_CTRPv2_All_CCLE <- t(exprs(summarizeMolecularProfiles(CTRPv2.CCLE,mDataTy
 ################
 
 # calculate Bimodality index for all genes using RNA-seq expression of each gene across all cell lines in CCLE
-ptm <- proc.time()
-BiModalScores_CTRPv2_All_CCLE <- apply(FUN = getBiModalScore,MARGIN = 2,X = RNAseq_CTRPv2_All_CCLE)
-proc.time() - ptm
+
+#BiModalScores_CTRPv2_All_CCLE <- apply(FUN = getBiModalScore,MARGIN = 2,X = RNAseq_CTRPv2_All_CCLE)
 #BiModalScores_CTRPv2_All_CCLE <- BiModalScores_CTRPv2_All_CCLE[order(BiModalScores_CTRPv2_All_CCLE,decreasing = T)]
 #BiModalScores_CTRPv2_CCLE_expandedSet_Full <- BiModalScores_CTRPv2_All_CCLE[expandedSet_Full]
 #BiModalScores_CTRPv2_CCLE_expandedSet_Full <- BiModalScores_CTRPv2_CCLE_expandedSet_Full[order(BiModalScores_CTRPv2_CCLE_expandedSet_Full)]
