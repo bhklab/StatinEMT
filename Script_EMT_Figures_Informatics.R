@@ -201,7 +201,9 @@ RNAseq_CTRPv2_All_CCLE <- t(exprs(summarizeMolecularProfiles(CTRPv2.CCLE,mDataTy
 ################
 
 # calculate Bimodality index for all genes using RNA-seq expression of each gene across all cell lines in CCLE
-#BiModalScores_CTRPv2_All_CCLE <- apply(FUN = getBiModalScore,MARGIN = 2,X = RNAseq_CTRPv2_All_CCLE)
+ptm <- proc.time()
+BiModalScores_CTRPv2_All_CCLE <- apply(FUN = getBiModalScore,MARGIN = 2,X = RNAseq_CTRPv2_All_CCLE)
+proc.time() - ptm
 #BiModalScores_CTRPv2_All_CCLE <- BiModalScores_CTRPv2_All_CCLE[order(BiModalScores_CTRPv2_All_CCLE,decreasing = T)]
 #BiModalScores_CTRPv2_CCLE_expandedSet_Full <- BiModalScores_CTRPv2_All_CCLE[expandedSet_Full]
 #BiModalScores_CTRPv2_CCLE_expandedSet_Full <- BiModalScores_CTRPv2_CCLE_expandedSet_Full[order(BiModalScores_CTRPv2_CCLE_expandedSet_Full)]
@@ -389,7 +391,7 @@ for(drug in statins){
   par(font.axis = 2,font.lab=2,cex=1.5, lwd=4)
   boxplot(cbind("Not Enriched"=AUC_subset[notExpressedCellLines],"Enriched"=AUC_subset[expressedCellLines]),ylab="AUC [%]",col=c("indianred2","lightskyblue"))
   
-  integrCindex <- Hmisc::rcorr.cens(x=AUC_subset[c(notExpressedCellLines,expressedCellLines)], S = as.numeric(RNAseq_CTRPv2_newSet[c(notExpressedCellLines,expressedCellLines),"label"]))
+  integrCindex <- Hmisc::rcorr.cens(S=AUC_subset[c(notExpressedCellLines,expressedCellLines)], x = as.numeric(RNAseq_CTRPv2_newSet[c(notExpressedCellLines,expressedCellLines),"label"]),outx = T )
   se <- integrCindex['S.D.']/2
   C <- integrCindex["C Index"]
   low <- C-1.96*se; hi <- C+1.96*se
