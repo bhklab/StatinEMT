@@ -201,7 +201,6 @@ RNAseq_CTRPv2_All_CCLE <- t(exprs(summarizeMolecularProfiles(CTRPv2.CCLE,mDataTy
 ################
 
 # calculate Bimodality index for all genes using RNA-seq expression of each gene across all cell lines in CCLE
-
 #BiModalScores_CTRPv2_All_CCLE <- apply(FUN = getBiModalScore,MARGIN = 2,X = RNAseq_CTRPv2_All_CCLE)
 #BiModalScores_CTRPv2_All_CCLE <- BiModalScores_CTRPv2_All_CCLE[order(BiModalScores_CTRPv2_All_CCLE,decreasing = T)]
 #BiModalScores_CTRPv2_CCLE_expandedSet_Full <- BiModalScores_CTRPv2_All_CCLE[expandedSet_Full]
@@ -253,7 +252,7 @@ newSet <- newSet[c(4,1,5,3,2)]
 
 # Figure 5B: plots for top 5 EMT genes bimodality
 pdf("./Fig_5B.pdf", height = 17, width = 13)
-par(mfrow=c(3,2))
+par(mfrow=c(4,2))
 
 cutoffs <- NULL
 for(i in 1:length(newSet)){
@@ -298,6 +297,50 @@ for(i in 1:length(newSet)){
   
 }
 
+# positive control
+
+data <- RNAseq_CTRPv2_All_CCLE[,control[2]][!is.na(RNAseq_CTRPv2_All_CCLE[,control[2]])]
+if(var(data)==0){
+  cutoffs <- c(cutoffs,max(data,na.rm = T))
+  next
+}
+rr2 <- mclust::Mclust(data = data, modelNames="V", G=2)
+if(is.null(rr2[[1]])) { ## EM algorithm did not converge
+  message("didn't converage")
+  cutoffs <- c(cutoffs,max(data,na.rm = T))
+  next
+}
+cells_1 <- names(rr2$classification)[rr2$classification==1] 
+cells_2 <- names(rr2$classification)[rr2$classification==2] 
+
+
+cutoff_tmp <- mean(c(min(data[cells_2]), max(data[cells_1])))
+cutoffs <- c(cutoffs,cutoff_tmp)
+
+symbol <- names(control)[2]
+A1 <- density(data[cells_1],adjust=2)
+max.y_tmp <- max(A1$y)
+A <- density(data)
+max.y <- max(A$y)
+par(lwd = 4)
+foo <- hist(data,breaks = 50,freq = F,axes = F, ylab = NULL, xlab = NULL,col = "lightgray", main = NULL,cex=2, xaxt='n',ann=FALSE)
+max.y <- max(foo$density)
+#  axis(side = 2, lwd = 4,ann=FALSE)
+title(main = symbol,col.main="blue",cex.main=4)
+
+max.y <- max(foo$density)
+A1 <- density(data[cells_1],adjust=2)
+
+lines(A1$x,scales::rescale(A1$y, to=c(0,max.y)),col="indianred4",lwd=4)
+A2 <- density(data[cells_2],adjust=2)
+max.y <- max(A$y)
+lines(A2$x,scales::rescale(A2$y, to=c(0,max.y/4)), col="mediumorchid4",lwd=4)
+abline(v=cutoff_tmp, col=c("red"), lty=2)
+
+
+
+
+# negative control
 data <- RNAseq_CTRPv2_All_CCLE[,control[1]][!is.na(RNAseq_CTRPv2_All_CCLE[,control[1]])]
 rr2 <- mclust::Mclust(data = data, modelNames="V", G=2)
 if(is.null(rr2[[1]])) { ## EM algorithm did not converge
@@ -391,17 +434,10 @@ for(drug in statins){
   boxplot(cbind("Not Enriched"=AUC_subset[notExpressedCellLines],"Enriched"=AUC_subset[expressedCellLines]),ylab="AUC [%]",col=c("indianred2","lightskyblue"))
   
   integrCindex <- Hmisc::rcorr.cens(S=AUC_subset[c(notExpressedCellLines,expressedCellLines)], x = as.numeric(RNAseq_CTRPv2_newSet[c(notExpressedCellLines,expressedCellLines),"label"]),outx = T )
-  se <- integrCindex['S.D.']/2
   C <- integrCindex["C Index"]
-  low <- C-1.96*se; hi <- C+1.96*se
-  CI_info <- c(C,low,hi)
-  
-  CIs[["EMT_Core"]][[drug]] <- C
-  
-  names(CI_info) <- c("CI","CI 0.95 Low","CI 0.95 Hi")
+
   Pvalue <-kruskal.test(list(AUC_subset[notExpressedCellLines], AUC_subset[expressedCellLines]))$p.value
-  pvalues[["EMT_Core"]][[drug]] <- Pvalue
-  
+
   title(main = drug)
   
   par(font=2,cex=1.3)
