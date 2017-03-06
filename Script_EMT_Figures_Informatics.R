@@ -21,21 +21,24 @@ library(mixtools)
 library(mclust)
 
 
+
+##################
+## set working directory to where this script is downloaded
+# setwd("./")
+##################
+
 CCLE <- downloadPSet("CCLE",saveDir = "./data/")
 CTRPv2 <- downloadPSet("CTRPv2",saveDir = "./data/")
 
 
 
 
-load("./data/CCLE.RData")
-load("./data/CTRPv2.RData")
+#load("./data/CCLE.RData")
+#load("./data/CTRPv2.RData")
 
 
 
-##################
-## set working directory to where this script is downloaded
-# setwd("./")
-##################
+
 
 #####################################
 #####################################
