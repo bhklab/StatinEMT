@@ -11,8 +11,8 @@ The script for the analysis is written in R.
 
 ----
 
-## Dependenices:
-These R packages needs to be installed in order to run the analysis script:
+## Dependencies:
+These R packages need to be installed in order to run the analysis script:
 - Biobase
 - PharmacoGx
 - mixtools
@@ -31,5 +31,5 @@ to
 `StatinEMT_Directory <- "./pathToStatinEMT-master_Directory"`
 
 - Running the script will produce all the figures related to the pharmacogenomics analysis
-- Included with project the bimodality scores for all genes across CCLE cell lines that have RNA-seq data. This can be found in "./data/BimodalScores_All_Genes.RData"
+- Included in the project are the bimodality scores for all genes across CCLE cell lines that have RNA-seq data. This can be found in "./data/BimodalScores_All_Genes.RData"
 
