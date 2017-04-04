@@ -3,7 +3,7 @@
 ##     Paper: Statin-induced cancer cell death can be mechanistically
 ##            uncoupled from protein prenylation
 ##     
-##     Code to generate Figures 5A,B,C and S5B
+##     Code to generate Figures 5A,B,C,D,E and S5A,B,C
 ##     Bimodality analysis and EMT association with Statins' sensitivity
 ##
 ##     Written by: Wail Ba alawi
@@ -24,7 +24,15 @@ library(mclust)
 
 ##################
 ## set working directory to where this script is downloaded
-# setwd("./")
+
+StatinEMT_Directory <- NULL
+#change the above line to:
+# StatinEMT_Directory <- "./pathToStatinEMT-master_Directory"
+
+
+if(!is.null(StatinEMT_Directory)){
+  setwd(StatinEMT_Directory)
+
 ##################
 
 CCLE <- downloadPSet("CCLE",saveDir = "./data/")
@@ -114,7 +122,7 @@ statins <- drugNames(CTRPv2)[j][c(1,2,6)]
 ###############################
 ##############################
 ###############################
-# Figure 5A Tissue Types in CCLE rnaseq data
+# Figure S5A Tissue Types in CCLE rnaseq data
 
 # retrieve all distribution of all tissue types in CCLE 
 tissues <- table(CTRPv2.CCLE@curation$tissue[,"unique.tissueid"])
@@ -158,7 +166,7 @@ cols2 <- c(
 
 # rearrange the order of the tissues for better presentation 
 tissues <- tissues[c(1,2,3,4,16,5,15,7,23,14,19,11,17,13,6,9,8,18,10,20,21,22,12)]
-pdf("./Fig_5A.pdf",height = 8, width = 11)
+pdf("./Fig_5SA.pdf",height = 8, width = 11)
 par(font=2,lwd=4)
 pie(tissues, col = cols2,main = NULL,cex=1.5)
 dev.off()
@@ -213,9 +221,9 @@ load("./data/BimodalScores_All_Genes.RData")
 
 #save(list =  c("BiModalScores_CTRPv2_All_CCLE", "BiModalScores_CTRPv2_CCLE_expandedSet_Full"),file = "./BimodalScores_All_Genes.RData")
 
-# Figure S5B: Bimodal index for all the genes (based on expression level)
+# Fig 5A data: Bimodal index for all the genes (based on expression level) 
 
-pdf(file = "./Fig_S5B.pdf",width = 12, height = 7)
+pdf(file = "./BimodalityScoresForAllGenes.pdf",width = 12, height = 7)
 par(font=2,font.axis=2,font.lab=2,lwd=4,cex=1.5)
 hist(BiModalScores_CTRPv2_All_CCLE,xlab = "Bimodal Index (BI)",freq = T,breaks = 30,col = "gray",main = NULL,xlim = c(0,3.5))
 axis(side = 1, lwd = 4)
@@ -253,8 +261,8 @@ newSet <- coreSet
 newSet <- newSet[c(4,1,5,3,2)]
 
 
-# Figure 5B: plots for top 5 EMT genes bimodality
-pdf("./Fig_5B.pdf", height = 17, width = 13)
+# Figure 5B - 5SBC: plots for top 5 EMT genes bimodality plus the controls
+pdf("./Fig_5B_5SBC.pdf", height = 17, width = 13)
 par(mfrow=c(4,2))
 
 cutoffs <- NULL
@@ -392,13 +400,13 @@ dev.off()
 
 
 
-# Figure 5C: top 5 EMT genes association with Statin response
+# Figure 5CDE: top 5 EMT genes association with Statin response
 
 
 newSet_Dir <- expandedSet_Full_Direction[newSet]
 CIs <- list()
 pvalues <- list()
-pdf("./Fig_5C.pdf",height = 18,width = 6)
+pdf("./Fig_5CDE.pdf",height = 18,width = 6)
 par(mfrow=c(3,1))
 for(drug in statins){
   
@@ -448,6 +456,9 @@ for(drug in statins){
 }
 dev.off()
 
+}else{
+  stop("Please set the working directory to where this script is downloaded\nInstructions are at the beginning of the script file")
+}
 
 
 
