@@ -391,7 +391,7 @@ for(drug in statins){
   notExpressedCellLines <- rownames(RNAseq_CTRPv2_newSet)[RNAseq_CTRPv2_newSet[,"label"]==0]
   notExpressedCellLines <- intersect(cellLines_intersect,notExpressedCellLines)
   par(font.axis = 2,font.lab=2,cex=1.5, lwd=4)
-  boxplot(cbind("Not Enriched"=AUC_subset[notExpressedCellLines],"Enriched"=AUC_subset[expressedCellLines]),ylab="AUC [%]",col=c("indianred2","lightskyblue"))
+  boxplot(list("Not Enriched"=AUC_subset[notExpressedCellLines],"Enriched"=AUC_subset[expressedCellLines]),ylab="AUC [%]",col=c("indianred2","lightskyblue"))
   
   integrCindex <- Hmisc::rcorr.cens(S=AUC_subset[c(notExpressedCellLines,expressedCellLines)], x = as.numeric(RNAseq_CTRPv2_newSet[c(notExpressedCellLines,expressedCellLines),"label"]),outx = T )
   C <- integrCindex["C Index"]
