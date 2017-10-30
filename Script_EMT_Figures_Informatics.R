@@ -119,57 +119,6 @@ j <- grep("statin", drugNames(CTRPv2))
 statins <- drugNames(CTRPv2)[j][c(1,2,6)]
 
 
-###############################
-##############################
-###############################
-# Figure S5A Tissue Types in CCLE rnaseq data
-
-# retrieve all distribution of all tissue types in CCLE 
-tissues <- table(CTRPv2.CCLE@curation$tissue[,"unique.tissueid"])
-
-tissues <- as.array(tissues)
-
-tissues <- tissues[names(tissues)!=""]
-names(tissues) <- sub("_", " ", names(tissues))
-names(tissues) <- sub("_", " ", names(tissues))
-names(tissues) <- sub("_", " ", names(tissues))
-
-firstup <- function(x) {
-  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
-  x
-}
-
-names(tissues) <- firstup(names(tissues))
-
-# we combined small and large intestine in one category for ease of presentation
-tissues["Small and large intestine"] <- sum(tissues["Large intestine"]+tissues["Small intestine"])
-
-tissues <- tissues[names(tissues)!="Large intestine"]
-tissues <- tissues[names(tissues)!="Small intestine"]
-
-
-cols2 <- c(
-  "#a6cee3"
-  ,"#1f78b4"
-  ,"#b2df8a"
-  ,"#33a02c"
-  ,"#fb9a99"
-  ,"#e31a1c"
-  ,"#fdbf6f"
-  ,"#ff7f00"
-  ,"#cab2d6"
-  ,"#6a3d9a"
-  ,"#ffff99"
-  ,"#b15928"
-)
-
-
-# rearrange the order of the tissues for better presentation 
-tissues <- tissues[c(1,2,3,4,16,5,15,7,23,14,19,11,17,13,6,9,8,18,10,20,21,22,12)]
-pdf("./Fig_5SA.pdf",height = 8, width = 11)
-par(font=2,lwd=4)
-pie(tissues, col = cols2,main = NULL,cex=1.5)
-dev.off()
 
 
 ############################################
@@ -261,8 +210,8 @@ newSet <- coreSet
 newSet <- newSet[c(4,1,5,3,2)]
 
 
-# Figure 5B - 5SBC: plots for top 5 EMT genes bimodality plus the controls
-pdf("./Fig_5B_5SBC.pdf", height = 17, width = 13)
+# Figure 5A: plots for top 5 EMT genes bimodality plus the controls
+pdf("./Fig_5A.pdf", height = 17, width = 13)
 par(mfrow=c(4,2))
 
 cutoffs <- NULL
@@ -380,14 +329,14 @@ max.y <- max(A$y)
 lines(A2$x,scales::rescale(A2$y, to=c(0,max.y)), col="mediumorchid4",lwd=4)
 #abline(v=cutoff_tmp, col=c("red"), lty=2)
 
-names(cutoffs) <- newSet
+names(cutoffs) <- c(newSet,control[2])
 
 dev.off()
 
 
 
-# legends for Figure B
-pdf("./Fig_5B_legends.pdf", height = 3, width = 7)
+# legends for Figure A
+pdf("./Fig_5A_legends.pdf", height = 3, width = 7)
 par(font=2)
 plot(1, type="n", axes=FALSE, xlab="", ylab="")
 legend(1, 1, legend = c("Non-expressed cell lines","Expressed cell lines","cutoff"), col=c("indianred4","mediumorchid4","red"),lwd=c(2,2,2), cex=2, xjust=0.5, yjust=0.5,bty="n",lty = c(1,1,2))
@@ -400,13 +349,13 @@ dev.off()
 
 
 
-# Figure 5CDE: top 5 EMT genes association with Statin response
+# Figure 5BCD: top 5 EMT genes association with Statin response
 
 
 newSet_Dir <- expandedSet_Full_Direction[newSet]
 CIs <- list()
 pvalues <- list()
-pdf("./Fig_5CDE.pdf",height = 18,width = 6)
+pdf("./Fig_5BCD.pdf",height = 18,width = 6)
 par(mfrow=c(3,1))
 for(drug in statins){
   
@@ -455,6 +404,155 @@ for(drug in statins){
   legend("topleft",legend = c(paste("CI:", sprintf("%.2g",C)),paste("P-value:", sprintf("%.1E",Pvalue)),paste("n:",length(notExpressedCellLines)),paste("n:",length(expressedCellLines)) ),cex = 1,bty="n",pch = c(NA,NA,15,15),col=c("indianred2","lightskyblue") )
 }
 dev.off()
+
+
+###############################
+##############################
+###############################
+# Figure S5A Tissue Types in CCLE rnaseq data
+
+# retrieve all distribution of all tissue types in CCLE 
+tissues <- table(CTRPv2.CCLE@curation$tissue[,"unique.tissueid"])
+
+tissues <- as.array(tissues)
+
+tissues <- tissues[names(tissues)!=""]
+names(tissues) <- sub("_", " ", names(tissues))
+names(tissues) <- sub("_", " ", names(tissues))
+names(tissues) <- sub("_", " ", names(tissues))
+
+firstup <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  x
+}
+
+names(tissues) <- firstup(names(tissues))
+
+# we combined small and large intestine in one category for ease of presentation
+tissues["Small and large intestine"] <- sum(tissues["Large intestine"]+tissues["Small intestine"])
+
+tissues <- tissues[names(tissues)!="Large intestine"]
+tissues <- tissues[names(tissues)!="Small intestine"]
+
+
+cols2 <- c(
+  "#a6cee3"
+  ,"#1f78b4"
+  ,"#b2df8a"
+  ,"#33a02c"
+  ,"#fb9a99"
+  ,"#e31a1c"
+  ,"#fdbf6f"
+  ,"#ff7f00"
+  ,"#cab2d6"
+  ,"#6a3d9a"
+  ,"#ffff99"
+  ,"#b15928"
+)
+
+
+# rearrange the order of the tissues for better presentation 
+tissues <- tissues[c(1,2,3,4,16,5,15,7,23,14,19,11,17,13,6,9,8,18,10,20,21,22,12)]
+pdf("./Fig_S5A.pdf",height = 8, width = 11)
+par(font=2,lwd=4)
+pie(tissues, col = cols2,main = NULL,cex=1.5)
+dev.off()
+
+
+########################################
+# Figure S5B bimodal distribution of ESR1 in breast cancer cell lines. 
+
+pdf("./Fig_S5B.pdf",width = 6,height = 6)
+BC_cellines <- rownames(CTRPv2.CCLE@cell)[which(CTRPv2.CCLE@cell$tissueid == "breast")]
+BC_cellines <- intersect(BC_cellines,rownames(RNAseq_CTRPv2_All_CCLE))
+data <- RNAseq_CTRPv2_All_CCLE[BC_cellines,control[2]][!is.na(RNAseq_CTRPv2_All_CCLE[BC_cellines,control[2]])]
+
+rr2 <- mclust::Mclust(data = data, modelNames="V", G=2)
+
+cells_1 <- names(rr2$classification)[rr2$classification==1] 
+cells_2 <- names(rr2$classification)[rr2$classification==2] 
+
+
+cutoff_tmp <- mean(c(min(data[cells_2]), max(data[cells_1])))
+
+symbol <- names(control)[2]
+A1 <- density(data[cells_1],adjust=2)
+max.y_tmp <- max(A1$y)
+A <- density(data)
+max.y <- max(A$y)
+par(lwd = 4)
+foo <- hist(data,breaks = 50,freq = F,axes = F, ylab = NULL, xlab = NULL,col = "lightgray", main = NULL,cex=2, xaxt='n',ann=FALSE)
+max.y <- max(foo$density)
+#  axis(side = 2, lwd = 4,ann=FALSE)
+title(main = paste(symbol,"[Breast only]",sep = " "),col.main="blue",cex.main=1)
+
+max.y <- max(foo$density)
+A1 <- density(data[cells_1],adjust=2)
+
+lines(A1$x,scales::rescale(A1$y, to=c(0,max.y)),col="indianred4",lwd=4)
+A2 <- density(data[cells_2],adjust=2)
+max.y <- max(A$y)
+lines(A2$x,scales::rescale(A2$y, to=c(0,max.y*2)), col="mediumorchid4",lwd=4)
+abline(v=cutoff_tmp, col=c("red"), lty=2)
+
+dev.off()
+
+
+
+###############################
+##############################
+###############################
+# Figure S5DEF ESR1 association with Statin response
+
+
+CIs <- list()
+pvalues <- list()
+pdf("./Fig_S5DEF.pdf",height = 23,width = 6)
+par(mfrow=c(3,1))
+for(drug in statins){
+  
+  cellsToKeep <- rownames(CTRPv2.CCLE@cell)[CTRPv2.CCLE@cell$tissueid!="haematopoietic_and_lymphoid_tissue"]
+  cellsToKeep <- intersect(cellsToKeep, unique(CTRPv2.CCLE@sensitivity$info$cellid[CTRPv2.CCLE@sensitivity$info$drugid==drug]) )
+  CTRPv2_test_subset <- subsetTo(CTRPv2.CCLE, drugs = drug,cells = cellsToKeep)
+  
+  RNAseq_CTRPv2_Drug <- t(exprs(summarizeMolecularProfiles(CTRPv2_test_subset,mDataType = "rnaseq",fill.missing = F)))
+  RNAseq_CTRPv2_newSet <- RNAseq_CTRPv2_Drug[,names(cutoffs)[6],drop=F]
+  
+  RNAseq_CTRPv2_newSet[,1] <- ifelse(RNAseq_CTRPv2_newSet[,1,drop=F]>cutoffs[6],1,0)
+  
+  label <- RNAseq_CTRPv2_newSet[,1]
+  
+  RNAseq_CTRPv2_newSet <- cbind(RNAseq_CTRPv2_newSet, "label"=label)
+  
+  AUC_subset <- summarizeSensitivityProfiles(CTRPv2_test_subset,sensitivity.measure = "auc_recomputed",fill.missing = F)*100
+  
+  cellLines_intersect <- intersect(rownames(RNAseq_CTRPv2_newSet),names(AUC_subset))
+  
+  
+  expressedCellLines <- rownames(RNAseq_CTRPv2_newSet)[RNAseq_CTRPv2_newSet[,"label"]==1]
+  expressedCellLines <- intersect(cellLines_intersect,expressedCellLines)
+  notExpressedCellLines <- rownames(RNAseq_CTRPv2_newSet)[RNAseq_CTRPv2_newSet[,"label"]==0]
+  notExpressedCellLines <- intersect(cellLines_intersect,notExpressedCellLines)
+  par(font.axis = 2,font.lab=2,cex=1.5, lwd=4)
+  boxplot(list("Not Enriched"=AUC_subset[notExpressedCellLines],"Enriched"=AUC_subset[expressedCellLines])
+          ,ylab="AUC [%]",col=c("indianred2","lightskyblue"),ylim=c(0,100)
+  )
+  
+  integrCindex <- Hmisc::rcorr.cens(S=AUC_subset[c(notExpressedCellLines,expressedCellLines)], x = as.numeric(RNAseq_CTRPv2_newSet[c(notExpressedCellLines,expressedCellLines),"label"]),outx = T )
+  C <- integrCindex["C Index"]
+  
+  Pvalue <-kruskal.test(list(AUC_subset[notExpressedCellLines], AUC_subset[expressedCellLines]))$p.value
+  
+  title(main = drug)
+  
+  par(font=2,cex=1.3)
+  legend("topleft",legend = c(paste("CI:", sprintf("%.2g",C)),paste("P-value:", sprintf("%.1E",Pvalue)),paste("n:",length(notExpressedCellLines)),paste("n:",length(expressedCellLines)) ),cex = 1,bty="n",pch = c(NA,NA,15,15),col=c("indianred2","lightskyblue") )
+}
+dev.off()
+
+
+
+
 
 }else{
   stop("Please set the working directory to where this script is downloaded\nInstructions are at the beginning of the script file")
